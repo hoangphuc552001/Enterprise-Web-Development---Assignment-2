@@ -1,122 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Routes, Route, Navigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Skill 10: routing-and-navigation — Central route configuration
+// All routes are defined here in one place so the URL structure is easy to understand.
+// Pages will be imported here as they are built in Phase 2+.
 
+// Temporary placeholder page used until real pages are built
+const PlaceholderPage = ({ title }: { title: string }) => (
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "80vh",
+    }}
+  >
+    <Typography variant="h4" color="primary">
+      {title} — Coming Soon
+    </Typography>
+  </Box>
+);
+
+const App = () => {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Routes>
+      {/* ─── PUBLIC ROUTES ─── */}
+      <Route path="/" element={<PlaceholderPage title="Home — Discover Movies" />} />
+      <Route path="/movies/:id" element={<PlaceholderPage title="Movie Details" />} />
+      <Route path="/movies/upcoming" element={<PlaceholderPage title="Upcoming Movies" />} />
+      <Route path="/movies/popular" element={<PlaceholderPage title="Popular Movies" />} />
+      <Route path="/movies/top-rated" element={<PlaceholderPage title="Top Rated Movies" />} />
+      <Route path="/movies/now-playing" element={<PlaceholderPage title="Now Playing" />} />
+      <Route path="/movies/:id/similar" element={<PlaceholderPage title="Similar Movies" />} />
+      <Route path="/actors" element={<PlaceholderPage title="Popular Actors" />} />
+      <Route path="/actors/:id" element={<PlaceholderPage title="Actor Details" />} />
+      <Route path="/tv" element={<PlaceholderPage title="Popular TV Series" />} />
+      <Route path="/tv/:id" element={<PlaceholderPage title="TV Series Details" />} />
+      <Route path="/login" element={<PlaceholderPage title="Login" />} />
+      <Route path="/signup" element={<PlaceholderPage title="Sign Up" />} />
 
-      <div className="ticks"></div>
+      {/* ─── PROTECTED ROUTES (auth guard added in Phase 6) ─── */}
+      <Route path="/movies/favourites" element={<PlaceholderPage title="Favourite Movies" />} />
+      <Route path="/reviews/:id" element={<PlaceholderPage title="Movie Review" />} />
+      <Route path="/reviews/form" element={<PlaceholderPage title="Write a Review" />} />
+      <Route path="/movies/search" element={<PlaceholderPage title="Search Movies" />} />
+      <Route path="/fantasy-movies" element={<PlaceholderPage title="My Fantasy Movies" />} />
+      <Route path="/fantasy-movies/new" element={<PlaceholderPage title="Create Fantasy Movie" />} />
+      <Route path="/fantasy-movies/:id" element={<PlaceholderPage title="Fantasy Movie Details" />} />
+      <Route path="/playlists" element={<PlaceholderPage title="My Playlists" />} />
+      <Route path="/playlists/:id" element={<PlaceholderPage title="Playlist Details" />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {/* ─── FALLBACK ─── */}
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
-
-export default App
+export default App;
