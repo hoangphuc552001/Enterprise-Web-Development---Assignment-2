@@ -1,13 +1,17 @@
-import './App.css'
+import { Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./pages/homePage";
 
-function App() {
+
+const App = () => {
   return (
-      <>
-        <h1>
-            Hello world!
-        </h1>
-      </>
-  )
-}
+    <Routes>
+      {/* PUBLIC routes */}
+      <Route path="/" element={<HomePage />} />
 
-export default App
+      {/*  FALLBACK routes */}
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};
+
+export default App;
