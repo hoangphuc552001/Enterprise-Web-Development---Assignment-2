@@ -1,15 +1,13 @@
 import { createTheme } from "@mui/material/styles";
 
-// Skill 4: material-ui-basics — centralised MUI theme
-// Provides consistent colours, typography, and component defaults across the entire app
 const theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#7B1FA2", // deep purple
+      main: "#7B1FA2",
     },
     secondary: {
-      main: "#FF6D00", // vibrant orange
+      main: "#FF6D00",
     },
     background: {
       default: "#121212",
