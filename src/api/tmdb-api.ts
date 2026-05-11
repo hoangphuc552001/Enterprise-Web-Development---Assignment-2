@@ -65,3 +65,9 @@ export const getTvSeries = (id: string) => {
     .then((res) => res.json())
     .then((json) => json);
 };
+
+export const getGenres = () => {
+  return fetch(`${BASE_URL}/genre/movie/list`)
+    .then((res) => res.json())
+    .then((json) => json);
+};

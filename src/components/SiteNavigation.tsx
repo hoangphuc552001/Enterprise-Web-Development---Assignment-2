@@ -90,7 +90,7 @@ export default function SiteNavigation({children}: Props) {
             >
                 {drawer}
             </Drawer>
-            <Box>
+            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                 {children}
             </Box>
         </Box>
