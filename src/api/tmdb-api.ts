@@ -5,7 +5,6 @@ interface GetMoviesParams {
   query?: string;
   sortBy?: string;
   withGenres?: string;
-  primaryReleaseYear?: number;
 }
 
 export const getMovies = ({
