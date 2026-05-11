@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 import {
     Box,
     Chip,
@@ -23,8 +23,8 @@ const POSTER_BASE = "https://image.tmdb.org/t/p/w500";
 
 const MovieDetailPage = () => {
     const {id} = useParams<{ id: string }>();
-    
-    const { data: movie, error, isLoading, isError } = useQuery<MovieDetailsProps, Error>({
+
+    const {data: movie, error, isLoading, isError} = useQuery<MovieDetailsProps, Error>({
         queryKey: ["movie", id],
         queryFn: () => getMovie(id!)
     });
@@ -103,25 +103,29 @@ const MovieDetailPage = () => {
                         <Divider/>
 
                         <Stack direction="row" spacing={3} sx={{flexWrap: "wrap"}}>
-                            <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                <PollIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                            <Typography variant="body2" color="text.secondary"
+                                        sx={{display: "flex", alignItems: "center"}}>
+                                <PollIcon fontSize="small" sx={{mr: 0.5}}/>
                                 {movie.vote_average.toFixed(1)} / 10 ({movie.vote_count} votes)
                             </Typography>
                             {movie.runtime > 0 && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <TimelapseIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <TimelapseIcon fontSize="small" sx={{mr: 0.5}}/>
                                     {movie.runtime} min
                                 </Typography>
                             )}
                             {movie.release_date && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <DateRangeIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <DateRangeIcon fontSize="small" sx={{mr: 0.5}}/>
                                     {movie.release_date}
                                 </Typography>
                             )}
                             {movie.status && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <StarIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <StarIcon fontSize="small" sx={{mr: 0.5}}/>
                                     Status: {movie.status}
                                 </Typography>
                             )}
