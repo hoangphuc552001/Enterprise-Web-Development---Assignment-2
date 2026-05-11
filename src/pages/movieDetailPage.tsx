@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import {
     Box,
     Chip,
@@ -9,7 +10,6 @@ import {
     Alert,
 } from "@mui/material";
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
 import {getMovie} from "../api/tmdb-api";
 import type {MovieDetailsProps} from "../types/interfaces";
 import PageHeader from "../components/PageHeader";
@@ -23,28 +23,13 @@ const POSTER_BASE = "https://image.tmdb.org/t/p/w500";
 
 const MovieDetailPage = () => {
     const {id} = useParams<{ id: string }>();
-    const [movie, setMovie] = useState<MovieDetailsProps | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    
+    const { data: movie, error, isLoading, isError } = useQuery<MovieDetailsProps, Error>({
+        queryKey: ["movie", id],
+        queryFn: () => getMovie(id!)
+    });
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                setLoading(true);
-                setError("");
-                const data = (await getMovie(id!)) as MovieDetailsProps;
-                setMovie(data);
-            } catch {
-                setError("Failed to load movie details.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        load();
-    }, [id]);
-
-    if (loading) {
+    if (isLoading) {
         return (
             <Box sx={{display: "flex", justifyContent: "center", py: 12}}>
                 <CircularProgress/>
@@ -52,10 +37,10 @@ const MovieDetailPage = () => {
         );
     }
 
-    if (error || !movie) {
+    if (isError || !movie) {
         return (
             <Container maxWidth="lg" sx={{py: 4}}>
-                <Alert severity="error">{error || "Movie not found."}</Alert>
+                <Alert severity="error">{error?.message || "Movie not found."}</Alert>
             </Container>
         );
     }

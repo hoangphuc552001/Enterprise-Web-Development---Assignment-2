@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
     Alert,
     Box,
@@ -7,47 +7,32 @@ import {
     Stack,
 } from "@mui/material";
 import {getMovies} from "../api/tmdb-api";
-import type {BaseMovieProps, GetMoviesResponse} from "../types/interfaces";
+import type {GetMoviesResponse} from "../types/interfaces";
 import PageHeader from "../components/PageHeader";
 import MovieList from "../components/MovieList";
 
 const HomePage = () => {
-    const [movies, setMovies] = useState<BaseMovieProps[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const { data, error, isLoading, isError } = useQuery<GetMoviesResponse, Error>({
+        queryKey: ["discover", "movies"],
+        queryFn: () => getMovies()
+    });
 
-    useEffect(() => {
-        const loadMovies = async () => {
-            try {
-                setLoading(true);
-                setError("");
-
-                const response = (await getMovies()) as GetMoviesResponse;
-                setMovies(response.results ?? []);
-            } catch {
-                setError("Failed to load movies");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadMovies();
-    }, []);
+    const movies = data?.results ?? [];
 
     return (
         <Container maxWidth="lg" sx={{py: 4}}>
             <Stack spacing={3}>
                 <PageHeader title="Movies" description="Discover movies from TMDB."/>
 
-                {loading ? (
+                {isLoading ? (
                     <Box sx={{display: "flex", justifyContent: "center", py: 8}}>
                         <CircularProgress/>
                     </Box>
                 ) : null}
 
-                {!loading && error ? <Alert severity="error">{error}</Alert> : null}
+                {isError ? <Alert severity="error">{error.message || "Failed to load movies"}</Alert> : null}
 
-                {!loading && !error ? <MovieList movies={movies}/> : null}
+                {!isLoading && !isError ? <MovieList movies={movies}/> : null}
             </Stack>
         </Container>
     );

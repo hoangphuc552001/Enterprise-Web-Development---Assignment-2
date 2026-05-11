@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import {
     Box,
     Chip,
@@ -9,7 +10,6 @@ import {
     Alert,
 } from "@mui/material";
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
 import {getTvSeries} from "../api/tmdb-api";
 import type {TvSeriesDetailsProps} from "../types/interfaces";
 import PageHeader from "../components/PageHeader";
@@ -23,28 +23,13 @@ const POSTER_BASE = "https://image.tmdb.org/t/p/w500";
 
 const TvSeriesDetailPage = () => {
     const {id} = useParams<{ id: string }>();
-    const [tvSeries, setTvSeries] = useState<TvSeriesDetailsProps | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                setLoading(true);
-                setError("");
-                const data = (await getTvSeries(id!)) as TvSeriesDetailsProps;
-                setTvSeries(data);
-            } catch {
-                setError("Failed to load TV series details.");
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data: tvSeries, error, isLoading, isError } = useQuery<TvSeriesDetailsProps, Error>({
+        queryKey: ["tvSeries", id],
+        queryFn: () => getTvSeries(id!)
+    });
 
-        load();
-    }, [id]);
-
-    if (loading) {
+    if (isLoading) {
         return (
             <Box sx={{display: "flex", justifyContent: "center", py: 12}}>
                 <CircularProgress/>
@@ -52,10 +37,10 @@ const TvSeriesDetailPage = () => {
         );
     }
 
-    if (error || !tvSeries) {
+    if (isError || !tvSeries) {
         return (
             <Container maxWidth="lg" sx={{py: 4}}>
-                <Alert severity="error">{error || "TV series not found."}</Alert>
+                <Alert severity="error">{error?.message || "TV series not found."}</Alert>
             </Container>
         );
     }
