@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 import {
     Box,
     CircularProgress,
@@ -21,7 +21,7 @@ const PROFILE_BASE = "https://image.tmdb.org/t/p/w500";
 const ActorDetailPage = () => {
     const {id} = useParams<{ id: string }>();
 
-    const { data: actor, error, isLoading, isError } = useQuery<ActorDetailsProps, Error>({
+    const {data: actor, error, isLoading, isError} = useQuery<ActorDetailsProps, Error>({
         queryKey: ["actor", id],
         queryFn: () => getActor(id!)
     });
@@ -67,7 +67,7 @@ const ActorDetailPage = () => {
                         <></>
                     )}
 
-                    <Stack spacing={2} sx={{ flex: 1 }}>
+                    <Stack spacing={2} sx={{flex: 1}}>
                         <PageHeader
                             title={actor.name ?? ""}
                             description={actor.known_for_department ? `Known for: ${actor.known_for_department}` : ""}
@@ -77,20 +77,23 @@ const ActorDetailPage = () => {
 
                         <Stack direction="row" spacing={3} sx={{flexWrap: "wrap"}}>
                             {actor.birthday && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <CakeIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <CakeIcon fontSize="small" sx={{mr: 0.5}}/>
                                     {actor.birthday}
                                 </Typography>
                             )}
                             {actor.place_of_birth && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <LocationOnIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <LocationOnIcon fontSize="small" sx={{mr: 0.5}}/>
                                     {actor.place_of_birth}
                                 </Typography>
                             )}
                             {actor.known_for_department && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <WorkIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <WorkIcon fontSize="small" sx={{mr: 0.5}}/>
                                     {actor.known_for_department}
                                 </Typography>
                             )}
@@ -99,7 +102,7 @@ const ActorDetailPage = () => {
                         <Divider/>
 
                         <Typography variant="h6" gutterBottom>Biography</Typography>
-                        <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                        <Typography variant="body1" sx={{whiteSpace: 'pre-line'}}>
                             {actor.biography}
                         </Typography>
                     </Stack>

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 import {
     Box,
     Chip,
@@ -24,7 +24,7 @@ const POSTER_BASE = "https://image.tmdb.org/t/p/w500";
 const TvSeriesDetailPage = () => {
     const {id} = useParams<{ id: string }>();
 
-    const { data: tvSeries, error, isLoading, isError } = useQuery<TvSeriesDetailsProps, Error>({
+    const {data: tvSeries, error, isLoading, isError} = useQuery<TvSeriesDetailsProps, Error>({
         queryKey: ["tvSeries", id],
         queryFn: () => getTvSeries(id!)
     });
@@ -86,7 +86,7 @@ const TvSeriesDetailPage = () => {
                         />
                     )}
 
-                    <Stack spacing={2} sx={{ flex: 1 }}>
+                    <Stack spacing={2} sx={{flex: 1}}>
                         <PageHeader
                             title={tvSeries.name ?? ""}
                             description={tvSeries.tagline ?? ""}
@@ -103,25 +103,29 @@ const TvSeriesDetailPage = () => {
                         <Divider/>
 
                         <Stack direction="row" spacing={3} sx={{flexWrap: "wrap"}}>
-                            <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                <PollIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                            <Typography variant="body2" color="text.secondary"
+                                        sx={{display: "flex", alignItems: "center"}}>
+                                <PollIcon fontSize="small" sx={{mr: 0.5}}/>
                                 {tvSeries.vote_average?.toFixed(1)} / 10 ({tvSeries.vote_count} votes)
                             </Typography>
                             {tvSeries.first_air_date && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <DateRangeIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <DateRangeIcon fontSize="small" sx={{mr: 0.5}}/>
                                     First Aired: {tvSeries.first_air_date}
                                 </Typography>
                             )}
                             {tvSeries.status && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <StarIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <StarIcon fontSize="small" sx={{mr: 0.5}}/>
                                     Status: {tvSeries.status}
                                 </Typography>
                             )}
                             {tvSeries.number_of_seasons && (
-                                <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                                    <LayersIcon fontSize="small" sx={{ mr: 0.5 }}/>
+                                <Typography variant="body2" color="text.secondary"
+                                            sx={{display: "flex", alignItems: "center"}}>
+                                    <LayersIcon fontSize="small" sx={{mr: 0.5}}/>
                                     Seasons: {tvSeries.number_of_seasons}
                                 </Typography>
                             )}
