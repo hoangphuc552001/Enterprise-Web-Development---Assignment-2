@@ -26,7 +26,7 @@ const HomePage = () => {
                 setMovies(response.results ?? []);
             } catch {
                 setError("Failed to load movies");
-            }finally {
+            } finally {
                 setLoading(false);
             }
         };
@@ -37,7 +37,7 @@ const HomePage = () => {
     return (
         <Container maxWidth="lg" sx={{py: 4}}>
             <Stack spacing={3}>
-                <PageHeader title="Movies" description="Discover movies from TMDB." />
+                <PageHeader title="Movies" description="Discover movies from TMDB."/>
 
                 {loading ? (
                     <Box sx={{display: "flex", justifyContent: "center", py: 8}}>
@@ -47,7 +47,7 @@ const HomePage = () => {
 
                 {!loading && error ? <Alert severity="error">{error}</Alert> : null}
 
-                {!loading && !error ? <MovieList movies={movies} /> : null}
+                {!loading && !error ? <MovieList movies={movies}/> : null}
             </Stack>
         </Container>
     );
