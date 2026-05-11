@@ -13,7 +13,6 @@ export const getMovies = ({
   query,
   sortBy = "popularity.desc",
   withGenres,
-  primaryReleaseYear,
 }: GetMoviesParams = {}) => {
   let url = `${BASE_URL}`;
 
@@ -23,9 +22,6 @@ export const getMovies = ({
     url += `/discover/movie?sort_by=${sortBy}`;
     if (withGenres) {
       url += `&with_genres=${withGenres}`;
-    }
-    if (primaryReleaseYear) {
-      url += `&primary_release_year=${primaryReleaseYear}`;
     }
   }
 
