@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import {
     Box,
     CircularProgress,
@@ -8,7 +9,6 @@ import {
     Alert,
 } from "@mui/material";
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
 import {getActor} from "../api/tmdb-api";
 import type {ActorDetailsProps} from "../types/interfaces";
 import PageHeader from "../components/PageHeader";
@@ -20,28 +20,13 @@ const PROFILE_BASE = "https://image.tmdb.org/t/p/w500";
 
 const ActorDetailPage = () => {
     const {id} = useParams<{ id: string }>();
-    const [actor, setActor] = useState<ActorDetailsProps | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                setLoading(true);
-                setError("");
-                const data = (await getActor(id!)) as ActorDetailsProps;
-                setActor(data);
-            } catch {
-                setError("Failed to load actor details.");
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data: actor, error, isLoading, isError } = useQuery<ActorDetailsProps, Error>({
+        queryKey: ["actor", id],
+        queryFn: () => getActor(id!)
+    });
 
-        load();
-    }, [id]);
-
-    if (loading) {
+    if (isLoading) {
         return (
             <Box sx={{display: "flex", justifyContent: "center", py: 12}}>
                 <CircularProgress/>
@@ -49,10 +34,10 @@ const ActorDetailPage = () => {
         );
     }
 
-    if (error || !actor) {
+    if (isError || !actor) {
         return (
             <Container maxWidth="lg" sx={{py: 4}}>
-                <Alert severity="error">{error || "Actor not found."}</Alert>
+                <Alert severity="error">{error?.message || "Actor not found."}</Alert>
             </Container>
         );
     }
