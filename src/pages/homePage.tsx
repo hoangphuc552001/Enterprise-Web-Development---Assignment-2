@@ -1,115 +1,116 @@
-import { useEffect, useState } from "react";
+import {useState} from "react";
+import {useQuery} from "@tanstack/react-query";
 import {
-  Alert,
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  CircularProgress,
-  Container,
-  Stack,
-  Typography,
+    Alert,
+    Box,
+    CircularProgress,
+    Container,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Stack,
+    TextField,
 } from "@mui/material";
-import { getMovies } from "../api/tmdb-api";
-import type { BaseMovieProps, GetMoviesResponse } from "../types/interfaces";
+import {getMovies, getGenres} from "../api/tmdb-api";
+import type {GetMoviesResponse} from "../types/interfaces";
+import PageHeader from "../components/PageHeader";
+import MovieList from "../components/MovieList";
+import {useDebounce} from "../hooks/useDebounce";
 
-const POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500";
+const SORT_OPTIONS = [
+    { value: "popularity.desc", label: "Most Popular" },
+    { value: "popularity.asc", label: "Least Popular" },
+    { value: "primary_release_date.desc", label: "Newest" },
+    { value: "primary_release_date.asc", label: "Oldest" },
+];
 
 const HomePage = () => {
-  const [movies, setMovies] = useState<BaseMovieProps[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedGenre, setSelectedGenre] = useState("");
+    const [sortBy, setSortBy] = useState("popularity.desc");
 
-  useEffect(() => {
-    let ignore = false;
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-    const loadMovies = async () => {
-      try {
-        setLoading(true);
-        setError("");
+    const { data: genresData } = useQuery<{ genres: Array<{ id: number; name: string }> }, Error>({
+        queryKey: ["genres"],
+        queryFn: () => getGenres(),
+    });
 
-        const response = (await getMovies()) as GetMoviesResponse;
+    const { data, error, isLoading, isError } = useQuery<GetMoviesResponse, Error>({
+        queryKey: ["movies", debouncedSearchQuery, selectedGenre, sortBy],
+        queryFn: () =>
+            getMovies({
+                query: debouncedSearchQuery || undefined,
+                sortBy: debouncedSearchQuery ? undefined : sortBy,
+                withGenres: selectedGenre || undefined,
+            }),
+    });
 
-        if (!ignore) {
-          setMovies(response.results ?? []);
-        }
-      } catch {
-        if (!ignore) {
-          setError("Failed to load movies. Check your TMDB API key and try again.");
-        }
-      } finally {
-        if (!ignore) {
-          setLoading(false);
-        }
-      }
-    };
+    const movies = data?.results ?? [];
+    const genres = genresData?.genres ?? [];
 
-    loadMovies();
+    return (
+        <Container maxWidth="lg" sx={{py: 4}}>
+            <Stack spacing={3}>
+                <PageHeader title="Movies" description="Discover movies from TMDB."/>
 
-    return () => {
-      ignore = true;
-    };
-  }, []);
+                <Stack spacing={2} >
+                    <TextField
+                        fullWidth
+                        placeholder="Search movies..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                    />
 
-  return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Stack spacing={3}>
-        <Box>
-          <Typography variant="h3" component="h1" gutterBottom>
-            Movies
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Discover movies from TMDB.
-          </Typography>
-        </Box>
+                    <Stack direction="row" spacing={2} sx={{flexWrap: "wrap"}}>
+                        <FormControl size="small" sx={{ minWidth: 160 }}>
+                            <InputLabel>Genre</InputLabel>
+                            <Select
+                                value={selectedGenre}
+                                onChange={(e) => setSelectedGenre(e.target.value)}
+                                label="Genre"
+                            >
+                                <MenuItem value="">All Genres</MenuItem>
+                                {genres.map((genre) => (
+                                    <MenuItem key={genre.id} value={genre.id}>
+                                        {genre.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-            <CircularProgress />
-          </Box>
-        ) : null}
+                        <FormControl size="small" sx={{ minWidth: 160 }} disabled={!!debouncedSearchQuery}>
+                            <InputLabel>Sort By</InputLabel>
+                            <Select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                label="Sort By"
+                            >
+                                {SORT_OPTIONS.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Stack>
+                </Stack>
 
-        {!loading && error ? <Alert severity="error">{error}</Alert> : null}
-
-        {!loading && !error ? (
-          <Stack spacing={2}>
-            {movies.map((movie) => (
-              <Card
-                key={movie.id}
-                sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}
-              >
-                {movie.poster_path ? (
-                  <CardMedia
-                    component="img"
-                    image={`${POSTER_BASE_URL}${movie.poster_path}`}
-                    alt={movie.title}
-                    sx={{ width: { sm: 180 }, objectFit: "cover" }}
-                  />
+                {isLoading ? (
+                    <Box sx={{display: "flex", justifyContent: "center", py: 8}}>
+                        <CircularProgress/>
+                    </Box>
                 ) : null}
 
-                <CardContent sx={{ flex: 1 }}>
-                  <Stack spacing={1}>
-                    <Typography variant="h5" component="h2">
-                      {movie.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Release date: {movie.release_date || "Unknown"}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Rating: {movie.vote_average.toFixed(1)} / 10
-                    </Typography>
-                    <Typography variant="body1">
-                      {movie.overview || "No overview available."}
-                    </Typography>
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
-          </Stack>
-        ) : null}
-      </Stack>
-    </Container>
-  );
+                {isError ? <Alert severity="error">{error.message || "Failed to load movies"}</Alert> : null}
+
+                {!isLoading && !isError ? <MovieList movies={movies}/> : null}
+            </Stack>
+        </Container>
+    );
 };
 
 export default HomePage;
