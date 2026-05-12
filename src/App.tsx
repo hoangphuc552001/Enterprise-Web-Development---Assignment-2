@@ -8,6 +8,8 @@ import TvSeriesDetailPage from "./pages/tvSeriesDetailPage";
 import FantasyMoviePage from "./pages/fantasyMoviePage";
 import FantasyMovieFormPage from "./pages/fantasyMovieFormPage";
 import SiteNavigation from "./components/SiteNavigation";
+import FavouriteActorsPage from "./pages/favouriteActorsPage.tsx";
+import FavouriteTvSeriesPage from "./pages/favouriteTvSeriesPage";
 
 const App = () => {
   return (
@@ -22,6 +24,8 @@ const App = () => {
         <Route path="/tv/:id" element={<TvSeriesDetailPage />} />
         <Route path="/fantasy" element={<FantasyMoviePage />} />
         <Route path="/fantasy/new" element={<FantasyMovieFormPage />} />
+        <Route path="/fav-actors" element={<FavouriteActorsPage />} />
+        <Route path="/fav-tv" element={<FavouriteTvSeriesPage />} />
 
         {/*  FALLBACK routes */}
         <Route path="*" element={<Navigate to="/" />} />

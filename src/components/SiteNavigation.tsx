@@ -15,6 +15,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useNavigate, useLocation } from "react-router-dom";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const drawerWidth = 240;
 
@@ -31,6 +32,12 @@ export default function SiteNavigation({ children }: Props) {
     { text: "Actors", icon: <PeopleIcon />, path: "/actors" },
     { text: "TV Series", icon: <LiveTvIcon />, path: "/tv" },
     { text: "Fantasy Movies", icon: <AutoAwesomeIcon />, path: "/fantasy" },
+    {
+      text: "Favorite Actors",
+      icon: <FavoriteIcon />,
+      path: "/fav-actors",
+    },
+    { text: "Favorite TV", icon: <FavoriteIcon />, path: "/fav-tv" },
   ];
 
   const drawer = (
