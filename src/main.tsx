@@ -7,14 +7,15 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import theme from "./theme";
 import App from "./App";
+import { AuthProvider } from "./contexts/AuthProvider";
 import "./index.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 360000,
-      refetchInterval: 360000, 
-      refetchOnWindowFocus: false
+      refetchInterval: 360000,
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -25,10 +26,12 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );
