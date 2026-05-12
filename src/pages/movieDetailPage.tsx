@@ -13,6 +13,7 @@ import { useParams, Link } from "react-router-dom";
 import { getMovie } from "../api/tmdb-api";
 import type { MovieDetailsProps } from "../types/interfaces";
 import PageHeader from "../components/PageHeader";
+import MovieReviews from "../components/MovieReviews";
 import PollIcon from "@mui/icons-material/Poll";
 import TimelapseIcon from "@mui/icons-material/Timelapse";
 import DateRangeIcon from "@mui/icons-material/DateRange";
@@ -206,6 +207,8 @@ const MovieDetailPage = () => {
                 </Stack>
               </>
             )}
+
+            <MovieReviews movieId={movie.id} />
           </Stack>
         </Stack>
       </Container>
