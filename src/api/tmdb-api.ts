@@ -5,6 +5,10 @@ interface GetMoviesParams {
   query?: string;
   sortBy?: string;
   withGenres?: string;
+  voteAverageGte?: number;
+  voteAverageLte?: number;
+  releaseDateGte?: string;
+  releaseDateLte?: string;
 }
 
 export const getMovies = ({
@@ -12,6 +16,10 @@ export const getMovies = ({
   query,
   sortBy = "popularity.desc",
   withGenres,
+  voteAverageGte,
+  voteAverageLte,
+  releaseDateGte,
+  releaseDateLte,
 }: GetMoviesParams = {}) => {
   let url = `${BASE_URL}`;
 
@@ -21,6 +29,18 @@ export const getMovies = ({
     url += `/discover/movie?sort_by=${sortBy}`;
     if (withGenres) {
       url += `&with_genres=${withGenres}`;
+    }
+    if (voteAverageGte !== undefined) {
+      url += `&vote_average.gte=${voteAverageGte}`;
+    }
+    if (voteAverageLte !== undefined) {
+      url += `&vote_average.lte=${voteAverageLte}`;
+    }
+    if (releaseDateGte) {
+      url += `&primary_release_date.gte=${releaseDateGte}`;
+    }
+    if (releaseDateLte) {
+      url += `&primary_release_date.lte=${releaseDateLte}`;
     }
   }
 
