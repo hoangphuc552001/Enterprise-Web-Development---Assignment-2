@@ -8,10 +8,12 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Pagination,
   Select,
   Stack,
   TextField,
+  Pagination,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { getMovies, getGenres } from "../api/tmdb-api";
 import type { GetMoviesResponse } from "../types/interfaces";
@@ -30,14 +32,22 @@ const SORT_OPTIONS = [
 const HomePage = () => {
   const [searchParams] = useSearchParams();
   const initialGenre = searchParams.get("genre");
+
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<number[]>(
     initialGenre ? [Number(initialGenre)] : [],
   );
   const [sortBy, setSortBy] = useState("popularity.desc");
-  const [page, setPage] = useState(1);
+  const [voteAverage, setVoteAverage] = useState<number[]>([0, 10]);
+  const [releaseDates, setReleaseDates] = useState<string[]>([
+    "1990-01-01",
+    `${new Date().getFullYear()}-12-31`,
+  ]);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const debouncedVoteAverage = useDebounce(voteAverage, 500);
+  const debouncedReleaseDates = useDebounce(releaseDates, 500);
 
   const { data: genresData } = useQuery<
     { genres: Array<{ id: number; name: string }> },
@@ -51,7 +61,15 @@ const HomePage = () => {
     GetMoviesResponse,
     Error
   >({
-    queryKey: ["movies", page, debouncedSearchQuery, selectedGenres, sortBy],
+    queryKey: [
+      "movies",
+      page,
+      debouncedSearchQuery,
+      selectedGenres,
+      sortBy,
+      debouncedVoteAverage,
+      debouncedReleaseDates,
+    ],
     queryFn: () =>
       getMovies({
         page,
@@ -59,6 +77,10 @@ const HomePage = () => {
         sortBy: debouncedSearchQuery ? undefined : sortBy,
         withGenres:
           selectedGenres.length > 0 ? selectedGenres.join(",") : undefined,
+        voteAverageGte: debouncedVoteAverage[0],
+        voteAverageLte: debouncedVoteAverage[1],
+        releaseDateGte: debouncedReleaseDates[0],
+        releaseDateLte: debouncedReleaseDates[1],
       }),
   });
 
@@ -80,9 +102,14 @@ const HomePage = () => {
             size="small"
           />
 
-          <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
-            <FormControl size="small" sx={{ minWidth: 160 }}>
-              <InputLabel>Genre</InputLabel>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ flexWrap: "wrap" }}
+            useFlexGap
+          >
+            <FormControl size="small" sx={{ minWidth: 200 }}>
+              <InputLabel>Genres</InputLabel>
               <Select
                 multiple
                 value={selectedGenres}
@@ -102,10 +129,10 @@ const HomePage = () => {
                     .join(", ")
                 }
               >
-                <MenuItem value="">All Genres</MenuItem>
                 {genres.map((genre) => (
                   <MenuItem key={genre.id} value={genre.id}>
-                    {genre.name}
+                    <Checkbox checked={selectedGenres.indexOf(genre.id) > -1} />
+                    <ListItemText primary={genre.name} />
                   </MenuItem>
                 ))}
               </Select>
@@ -119,7 +146,10 @@ const HomePage = () => {
               <InputLabel>Sort By</InputLabel>
               <Select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => {
+                  setSortBy(e.target.value);
+                  setPage(1);
+                }}
                 label="Sort By"
               >
                 {SORT_OPTIONS.map((option) => (
@@ -129,6 +159,68 @@ const HomePage = () => {
                 ))}
               </Select>
             </FormControl>
+
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <TextField
+                label="Release Date From"
+                type="date"
+                size="small"
+                sx={{ width: 160 }}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
+                value={releaseDates[0]}
+                onChange={(e) => {
+                  setReleaseDates([e.target.value, releaseDates[1]]);
+                  setPage(1);
+                }}
+              />
+              <TextField
+                label="Release Date To"
+                type="date"
+                size="small"
+                sx={{ width: 160 }}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
+                value={releaseDates[1]}
+                onChange={(e) => {
+                  setReleaseDates([releaseDates[0], e.target.value]);
+                  setPage(1);
+                }}
+              />
+            </Box>
+
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <TextField
+                label="Min Vote Average"
+                type="number"
+                size="small"
+                sx={{ width: 150 }}
+                slotProps={{
+                  htmlInput: { min: 0, max: 10, step: 0.1 },
+                }}
+                value={voteAverage[0]}
+                onChange={(e) => {
+                  setVoteAverage([Number(e.target.value), voteAverage[1]]);
+                  setPage(1);
+                }}
+              />
+              <TextField
+                label="Max Vote Average"
+                type="number"
+                size="small"
+                sx={{ width: 150 }}
+                slotProps={{
+                  htmlInput: { min: 0, max: 10, step: 0.1 },
+                }}
+                value={voteAverage[1]}
+                onChange={(e) => {
+                  setVoteAverage([voteAverage[0], Number(e.target.value)]);
+                  setPage(1);
+                }}
+              />
+            </Box>
           </Stack>
         </Stack>
 
