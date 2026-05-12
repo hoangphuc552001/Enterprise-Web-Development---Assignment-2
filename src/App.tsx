@@ -24,8 +24,8 @@ const App = () => {
         <Route path="/tv/:id" element={<TvSeriesDetailPage />} />
         <Route path="/fantasy" element={<FantasyMoviePage />} />
         <Route path="/fantasy/new" element={<FantasyMovieFormPage />} />
-        <Route path="/actors/favourites" element={<FavouriteActorsPage />} />
-        <Route path="/tv/favourites" element={<FavouriteTvSeriesPage />} />
+        <Route path="/fav-actors" element={<FavouriteActorsPage />} />
+        <Route path="/fav-tv" element={<FavouriteTvSeriesPage />} />
 
         {/*  FALLBACK routes */}
         <Route path="*" element={<Navigate to="/" />} />
