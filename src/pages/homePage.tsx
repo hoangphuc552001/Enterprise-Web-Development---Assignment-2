@@ -18,6 +18,7 @@ import type { GetMoviesResponse } from "../types/interfaces";
 import PageHeader from "../components/PageHeader";
 import MovieList from "../components/MovieList";
 import { useDebounce } from "../hooks/useDebounce";
+import { useSearchParams } from "react-router-dom";
 
 const SORT_OPTIONS = [
   { value: "popularity.desc", label: "Most Popular" },
@@ -27,8 +28,12 @@ const SORT_OPTIONS = [
 ];
 
 const HomePage = () => {
+  const [searchParams] = useSearchParams();
+  const initialGenre = searchParams.get("genre");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedGenres, setSelectedGenres] = useState<number[]>(
+    initialGenre ? [Number(initialGenre)] : [],
+  );
   const [sortBy, setSortBy] = useState("popularity.desc");
   const [page, setPage] = useState(1);
 
@@ -46,13 +51,14 @@ const HomePage = () => {
     GetMoviesResponse,
     Error
   >({
-    queryKey: ["movies", page, debouncedSearchQuery, selectedGenre, sortBy],
+    queryKey: ["movies", page, debouncedSearchQuery, selectedGenres, sortBy],
     queryFn: () =>
       getMovies({
         page,
         query: debouncedSearchQuery || undefined,
         sortBy: debouncedSearchQuery ? undefined : sortBy,
-        withGenres: selectedGenre || undefined,
+        withGenres:
+          selectedGenres.length > 0 ? selectedGenres.join(",") : undefined,
       }),
   });
 
@@ -78,9 +84,23 @@ const HomePage = () => {
             <FormControl size="small" sx={{ minWidth: 160 }}>
               <InputLabel>Genre</InputLabel>
               <Select
-                value={selectedGenre}
-                onChange={(e) => setSelectedGenre(e.target.value)}
-                label="Genre"
+                multiple
+                value={selectedGenres}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedGenres(
+                    typeof val === "string"
+                      ? val.split(",").map(Number)
+                      : (val as number[]),
+                  );
+                  setPage(1);
+                }}
+                label="Genres"
+                renderValue={(selected) =>
+                  selected
+                    .map((id) => genres.find((g) => g.id === id)?.name)
+                    .join(", ")
+                }
               >
                 <MenuItem value="">All Genres</MenuItem>
                 {genres.map((genre) => (
