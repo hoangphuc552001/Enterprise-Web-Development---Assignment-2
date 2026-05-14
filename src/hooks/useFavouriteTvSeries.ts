@@ -1,29 +1,36 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getFavourites, updateFavourites } from "../api/user-api";
 
 export const useFavouriteTvSeries = () => {
-  const [favouriteTvSeries, setFavouriteTvSeries] = useState<number[]>(() => {
-    const saved = localStorage.getItem("favouriteTvSeries");
-    return saved ? JSON.parse(saved) : [];
+  const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: ["favourites", "tv"],
+    queryFn: getFavourites,
   });
 
-  useEffect(() => {
-    localStorage.setItem(
-      "favouriteTvSeries",
-      JSON.stringify(favouriteTvSeries),
-    );
-  }, [favouriteTvSeries]);
+  const favouriteTvSeries: number[] = data?.tv || [];
+
+  const mutation = useMutation({
+    mutationFn: (newFavourites: number[]) =>
+      updateFavourites("tv", newFavourites),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favourites", "tv"] });
+    },
+  });
 
   const toggleFavourite = (id: number) => {
-    setFavouriteTvSeries((prev) =>
-      prev.includes(id) ? prev.filter((sId) => sId !== id) : [...prev, id],
-    );
+    const newFavourites = favouriteTvSeries.includes(id)
+      ? favouriteTvSeries.filter((sId) => sId !== id)
+      : [...favouriteTvSeries, id];
+    mutation.mutate(newFavourites);
+  };
+
+  const reorderFavourites = (newFavourites: number[]) => {
+    mutation.mutate(newFavourites);
   };
 
   const isFavourite = (id: number) => favouriteTvSeries.includes(id);
-
-  const reorderFavourites = (newOrder: number[]) => {
-    setFavouriteTvSeries(newOrder);
-  };
 
   return { favouriteTvSeries, toggleFavourite, isFavourite, reorderFavourites };
 };

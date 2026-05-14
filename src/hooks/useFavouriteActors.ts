@@ -1,26 +1,36 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getFavourites, updateFavourites } from "../api/user-api";
 
 export const useFavouriteActors = () => {
-  const [favouriteActors, setFavouriteActors] = useState<number[]>(() => {
-    const saved = localStorage.getItem("favouriteActors");
-    return saved ? JSON.parse(saved) : [];
+  const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: ["favourites", "actors"],
+    queryFn: getFavourites,
   });
 
-  useEffect(() => {
-    localStorage.setItem("favouriteActors", JSON.stringify(favouriteActors));
-  }, [favouriteActors]);
+  const favouriteActors: number[] = data?.actors || [];
+
+  const mutation = useMutation({
+    mutationFn: (newFavourites: number[]) =>
+      updateFavourites("actors", newFavourites),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favourites", "actors"] });
+    },
+  });
 
   const toggleFavourite = (id: number) => {
-    setFavouriteActors((prev) =>
-      prev.includes(id) ? prev.filter((aId) => aId !== id) : [...prev, id],
-    );
+    const newFavourites = favouriteActors.includes(id)
+      ? favouriteActors.filter((aId) => aId !== id)
+      : [...favouriteActors, id];
+    mutation.mutate(newFavourites);
+  };
+
+  const reorderFavourites = (newFavourites: number[]) => {
+    mutation.mutate(newFavourites);
   };
 
   const isFavourite = (id: number) => favouriteActors.includes(id);
-
-  const reorderFavourites = (newOrder: number[]) => {
-    setFavouriteActors(newOrder);
-  };
 
   return { favouriteActors, toggleFavourite, isFavourite, reorderFavourites };
 };

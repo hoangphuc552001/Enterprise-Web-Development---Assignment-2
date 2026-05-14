@@ -9,12 +9,11 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Tooltip,
-  Box,
 } from "@mui/material";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import { Link } from "react-router-dom";
 import type { BaseMovieProps } from "../types/interfaces";
+
 import { usePlaylists } from "../hooks/usePlaylists";
 
 const POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500";
@@ -24,29 +23,28 @@ interface MovieCardProps {
 }
 
 const MovieCard = ({ movie }: MovieCardProps) => {
-  const { playlists, addMovieToPlaylist } = usePlaylists();
+  const { playlists, addToPlaylist } = usePlaylists();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setAnchorEl(e.currentTarget);
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = (e: React.MouseEvent | React.SyntheticEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleClose = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setAnchorEl(null);
   };
 
-  const handleAddToPlaylist = (
-    e: React.MouseEvent | React.SyntheticEvent,
-    playlistId: string,
-  ) => {
+  const handleAddToPlaylist = (playlistId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addMovieToPlaylist(playlistId, movie.id);
-    setAnchorEl(null);
+    addToPlaylist(playlistId, movie.id);
+    handleClose();
   };
 
   return (
@@ -58,41 +56,40 @@ const MovieCard = ({ movie }: MovieCardProps) => {
         position: "relative",
       }}
     >
-      <Box sx={{ position: "absolute", top: 8, right: 8, zIndex: 2 }}>
-        <Tooltip title="Add to Playlist">
-          <IconButton
-            onClick={handleMenuClick}
-            sx={{
-              bgcolor: "background.paper",
-              "&:hover": { bgcolor: "grey.200" },
-            }}
-          >
-            <PlaylistAddIcon color="primary" />
-          </IconButton>
-        </Tooltip>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-        >
-          {playlists.length === 0 ? (
-            <MenuItem disabled>No playlists available</MenuItem>
-          ) : (
-            playlists.map((playlist) => (
-              <MenuItem
-                key={playlist.id}
-                onClick={(e) => handleAddToPlaylist(e, playlist.id)}
-              >
-                {playlist.name}
-              </MenuItem>
-            ))
-          )}
-        </Menu>
-      </Box>
+      <IconButton
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          zIndex: 2,
+          bgcolor: "rgba(255, 255, 255, 0.8)",
+          "&:hover": { bgcolor: "rgba(255, 255, 255, 1)" },
+        }}
+        onClick={handleMenuClick}
+      >
+        <PlaylistAddIcon color="primary" />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {playlists.length === 0 ? (
+          <MenuItem disabled>No playlists available</MenuItem>
+        ) : (
+          playlists.map((p) => (
+            <MenuItem
+              key={p.id}
+              onClick={(e) => handleAddToPlaylist(p.id, e)}
+              disabled={p.movieIds.includes(movie.id)}
+            >
+              {p.name} {p.movieIds.includes(movie.id) && "(Added)"}
+            </MenuItem>
+          ))
+        )}
+      </Menu>
+
       <CardActionArea
         component={Link}
         to={`/movies/${movie.id}`}
@@ -111,7 +108,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
           />
         ) : null}
 
-        <CardContent sx={{ flex: 1, pr: 6 }}>
+        <CardContent sx={{ flex: 1 }}>
           <Stack spacing={1}>
             <Typography variant="h5" component="h2">
               {movie.title}

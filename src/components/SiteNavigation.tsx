@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Box,
+  Divider,
   Drawer,
   List,
   ListItem,
@@ -43,7 +44,7 @@ export default function SiteNavigation({ children }: Props) {
       path: "/fav-actors",
     },
     { text: "Favorite TV", icon: <FavoriteIcon />, path: "/fav-tv" },
-    { text: "Playlists", icon: <MovieIcon />, path: "/playlists" },
+    { text: "Playlists", icon: <AutoAwesomeIcon />, path: "/playlists" },
   ];
 
   const drawer = (
@@ -103,6 +104,8 @@ export default function SiteNavigation({ children }: Props) {
           );
         })}
       </List>
+
+      <Divider sx={{ mt: "auto" }} />
 
       <List sx={{ mt: "auto" }}>
         {isAuthenticated ? (
