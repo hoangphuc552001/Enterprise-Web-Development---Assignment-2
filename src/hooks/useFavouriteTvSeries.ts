@@ -21,5 +21,9 @@ export const useFavouriteTvSeries = () => {
 
   const isFavourite = (id: number) => favouriteTvSeries.includes(id);
 
-  return { favouriteTvSeries, toggleFavourite, isFavourite };
+  const reorderFavourites = (newOrder: number[]) => {
+    setFavouriteTvSeries(newOrder);
+  };
+
+  return { favouriteTvSeries, toggleFavourite, isFavourite, reorderFavourites };
 };
