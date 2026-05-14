@@ -43,6 +43,7 @@ export default function SiteNavigation({ children }: Props) {
       path: "/fav-actors",
     },
     { text: "Favorite TV", icon: <FavoriteIcon />, path: "/fav-tv" },
+    { text: "Playlists", icon: <MovieIcon />, path: "/playlists" },
   ];
 
   const drawer = (
