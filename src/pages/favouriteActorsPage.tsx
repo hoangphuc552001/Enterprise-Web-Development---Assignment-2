@@ -46,7 +46,7 @@ const FavouriteActorsPage = () => {
       <Stack spacing={3}>
         <PageHeader
           title="Favourite Actors"
-          description="Your favorite actors in one place. Drag and drop to reorder them!"
+          description="Your favorite actors!"
         />
 
         {isLoading ? (

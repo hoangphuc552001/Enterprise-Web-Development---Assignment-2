@@ -46,7 +46,7 @@ const FavouriteTvSeriesPage = () => {
       <Stack spacing={3}>
         <PageHeader
           title="Favourite TV Series"
-          description="Your favorite TV series in one place. Drag and drop to reorder them!"
+          description="Your favorite TV series!"
         />
 
         {isLoading ? (
