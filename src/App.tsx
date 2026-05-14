@@ -14,6 +14,8 @@ import LoginPage from "./pages/loginPage";
 import SignupPage from "./pages/signupPage";
 import ConfirmSignupPage from "./pages/confirmSignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PlaylistsPage from "./pages/playlistsPage";
+import PlaylistDetailsPage from "./pages/playlistDetailsPage";
 
 const App = () => {
   return (
@@ -55,6 +57,23 @@ const App = () => {
         <Route path="/fantasy/new" element={<FantasyMovieFormPage />} />
         <Route path="/fav-actors" element={<FavouriteActorsPage />} />
         <Route path="/fav-tv" element={<FavouriteTvSeriesPage />} />
+
+        <Route
+          path="/playlists"
+          element={
+            <ProtectedRoute>
+              <PlaylistsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/playlists/:id"
+          element={
+            <ProtectedRoute>
+              <PlaylistDetailsPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/*  FALLBACK routes */}
         <Route path="*" element={<Navigate to="/" />} />

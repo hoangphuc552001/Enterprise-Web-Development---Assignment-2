@@ -40,4 +40,6 @@ export interface FantasyMovie {
   releaseDate: string;
   runtime: number;
   productionCompanies: string[];
+  posterPath?: string;
+  cast?: Array<{ name: string; roleName: string; description: string }>;
 }

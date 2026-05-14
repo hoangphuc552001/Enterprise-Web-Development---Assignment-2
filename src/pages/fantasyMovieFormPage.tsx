@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -32,6 +32,8 @@ interface FormValues {
   releaseDate: string;
   runtime: number;
   productionCompanies: string[];
+  posterPath: string;
+  cast: { name: string; roleName: string; description: string }[];
 }
 
 const FantasyMovieFormPage = () => {
@@ -52,7 +54,6 @@ const FantasyMovieFormPage = () => {
     control,
     handleSubmit,
     register,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<FormValues>({
@@ -63,10 +64,21 @@ const FantasyMovieFormPage = () => {
       releaseDate: "",
       runtime: 90,
       productionCompanies: [],
+      posterPath: "",
+      cast: [],
     },
   });
 
-  const companies = watch("productionCompanies");
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "cast",
+  });
+
+  const companies =
+    useWatch({
+      control,
+      name: "productionCompanies",
+    }) ?? [];
 
   const addCompany = () => {
     const trimmed = companyInput.trim();
@@ -93,6 +105,8 @@ const FantasyMovieFormPage = () => {
       releaseDate: values.releaseDate,
       runtime: Number(values.runtime),
       productionCompanies: values.productionCompanies,
+      posterPath: values.posterPath,
+      cast: values.cast,
     };
     addMovie(movie);
     navigate(`/fantasy`);
@@ -191,6 +205,92 @@ const FantasyMovieFormPage = () => {
                 min: { value: 1, message: "Must be at least 1 minute" },
               })}
             />
+
+            <TextField
+              label="Poster URL"
+              fullWidth
+              error={!!errors.posterPath}
+              helperText={errors.posterPath?.message}
+              {...register("posterPath")}
+            />
+
+            <Stack spacing={2}>
+              <Stack
+                direction="row"
+                sx={{ justifyContent: "space-between", alignItems: "center" }}
+              >
+                <Typography variant="subtitle2" color="text.secondary">
+                  Cast Members
+                </Typography>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  style={{ marginLeft: "10px" }}
+                  startIcon={<AddIcon />}
+                  onClick={() =>
+                    append({ name: "", roleName: "", description: "" })
+                  }
+                >
+                  Add Cast
+                </Button>
+              </Stack>
+              {fields.map((item, index) => (
+                <Box
+                  key={item.id}
+                  sx={{ p: 2, border: "1px solid #ddd", borderRadius: 1 }}
+                >
+                  <Stack
+                    direction="row"
+                    sx={{
+                      mb: 2,
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="subtitle2">
+                      Cast Member {index + 1}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => remove(index)}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Stack>
+                  <Stack spacing={2}>
+                    <TextField
+                      label="Actor Name"
+                      size="small"
+                      fullWidth
+                      error={!!errors.cast?.[index]?.name}
+                      helperText={errors.cast?.[index]?.name?.message}
+                      {...register(`cast.${index}.name` as const, {
+                        required: "Name is required",
+                      })}
+                    />
+                    <TextField
+                      label="Role Name"
+                      size="small"
+                      fullWidth
+                      error={!!errors.cast?.[index]?.roleName}
+                      helperText={errors.cast?.[index]?.roleName?.message}
+                      {...register(`cast.${index}.roleName` as const, {
+                        required: "Role Name is required",
+                      })}
+                    />
+                    <TextField
+                      label="Description"
+                      size="small"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      {...register(`cast.${index}.description` as const)}
+                    />
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
 
             <Stack spacing={1}>
               <Typography variant="subtitle2" color="text.secondary">
