@@ -18,5 +18,9 @@ export const useFavouriteActors = () => {
 
   const isFavourite = (id: number) => favouriteActors.includes(id);
 
-  return { favouriteActors, toggleFavourite, isFavourite };
+  const reorderFavourites = (newOrder: number[]) => {
+    setFavouriteActors(newOrder);
+  };
+
+  return { favouriteActors, toggleFavourite, isFavourite, reorderFavourites };
 };
