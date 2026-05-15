@@ -59,8 +59,12 @@ export const usePlaylists = () => {
     mutation.mutate(updated);
   };
 
+  const getPlaylist = (id: string) =>
+    playlists.find((playlist) => playlist.id === id);
+
   return {
     playlists,
+    getPlaylist,
     createPlaylist,
     deletePlaylist,
     addToPlaylist,

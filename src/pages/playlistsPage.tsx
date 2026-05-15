@@ -42,8 +42,10 @@ const PlaylistsPage = () => {
       <Stack spacing={3}>
         <Stack
           direction="row"
-          justifyContent="space-between"
-          alignItems="center"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
           <PageHeader
             title="My Playlists"

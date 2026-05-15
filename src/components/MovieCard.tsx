@@ -10,6 +10,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import type { MenuProps } from "@mui/material";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import { Link } from "react-router-dom";
 import type { BaseMovieProps } from "../types/interfaces";
@@ -32,19 +33,19 @@ const MovieCard = ({ movie }: MovieCardProps) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  const closeMenu = () => {
     setAnchorEl(null);
+  };
+
+  const handleMenuClose: NonNullable<MenuProps["onClose"]> = () => {
+    closeMenu();
   };
 
   const handleAddToPlaylist = (playlistId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToPlaylist(playlistId, movie.id);
-    handleClose();
+    closeMenu();
   };
 
   return (
@@ -72,7 +73,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={handleClose}
+        onClose={handleMenuClose}
         onClick={(e) => e.stopPropagation()}
       >
         {playlists.length === 0 ? (
