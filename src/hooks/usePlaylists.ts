@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPlaylists, updatePlaylists } from "../api/user-api";
 
 export interface Playlist {
   id: string;
@@ -8,14 +9,21 @@ export interface Playlist {
 }
 
 export const usePlaylists = () => {
-  const [playlists, setPlaylists] = useState<Playlist[]>(() => {
-    const saved = localStorage.getItem("playlists");
-    return saved ? JSON.parse(saved) : [];
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["playlists"],
+    queryFn: getPlaylists,
   });
 
-  useEffect(() => {
-    localStorage.setItem("playlists", JSON.stringify(playlists));
-  }, [playlists]);
+  const playlists: Playlist[] = data || [];
+
+  const mutation = useMutation({
+    mutationFn: (newPlaylists: Playlist[]) => updatePlaylists(newPlaylists),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["playlists"] });
+    },
+  });
 
   const createPlaylist = (name: string, description: string) => {
     const newPlaylist: Playlist = {
@@ -24,48 +32,43 @@ export const usePlaylists = () => {
       description,
       movieIds: [],
     };
-    setPlaylists((prev) => [...prev, newPlaylist]);
+    mutation.mutate([...playlists, newPlaylist]);
   };
 
-  const addMovieToPlaylist = (playlistId: string, movieId: number) => {
-    setPlaylists((prev) =>
-      prev.map((playlist) => {
-        if (playlist.id === playlistId) {
-          if (!playlist.movieIds.includes(movieId)) {
-            return { ...playlist, movieIds: [...playlist.movieIds, movieId] };
-          }
-        }
-        return playlist;
-      }),
-    );
+  const deletePlaylist = (id: string) => {
+    mutation.mutate(playlists.filter((p) => p.id !== id));
   };
 
-  const removeMovieFromPlaylist = (playlistId: string, movieId: number) => {
-    setPlaylists((prev) =>
-      prev.map((playlist) => {
-        if (playlist.id === playlistId) {
-          return {
-            ...playlist,
-            movieIds: playlist.movieIds.filter((id) => id !== movieId),
-          };
-        }
-        return playlist;
-      }),
-    );
+  const addToPlaylist = (playlistId: string, movieId: number) => {
+    const updated = playlists.map((p) => {
+      if (p.id === playlistId && !p.movieIds.includes(movieId)) {
+        return { ...p, movieIds: [...p.movieIds, movieId] };
+      }
+      return p;
+    });
+    mutation.mutate(updated);
   };
 
-  const deletePlaylist = (playlistId: string) => {
-    setPlaylists((prev) => prev.filter((p) => p.id !== playlistId));
+  const removeFromPlaylist = (playlistId: string, movieId: number) => {
+    const updated = playlists.map((p) => {
+      if (p.id === playlistId) {
+        return { ...p, movieIds: p.movieIds.filter((id) => id !== movieId) };
+      }
+      return p;
+    });
+    mutation.mutate(updated);
   };
 
-  const getPlaylist = (id: string) => playlists.find((p) => p.id === id);
+  const getPlaylist = (id: string) =>
+    playlists.find((playlist) => playlist.id === id);
 
   return {
     playlists,
-    createPlaylist,
-    addMovieToPlaylist,
-    removeMovieFromPlaylist,
-    deletePlaylist,
     getPlaylist,
+    createPlaylist,
+    deletePlaylist,
+    addToPlaylist,
+    removeFromPlaylist,
+    isLoading,
   };
 };

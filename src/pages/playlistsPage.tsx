@@ -2,168 +2,173 @@ import { useState } from "react";
 import {
   Container,
   Stack,
+  Box,
   Typography,
-  Card,
-  CardContent,
-  CardActions,
+  CircularProgress,
   Button,
-  Grid,
+  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  IconButton,
-  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
 import { usePlaylists } from "../hooks/usePlaylists";
 import PageHeader from "../components/PageHeader";
 
 const PlaylistsPage = () => {
-  const { playlists, createPlaylist, deletePlaylist } = usePlaylists();
-  const navigate = useNavigate();
+  const { playlists, isLoading, createPlaylist, deletePlaylist } =
+    usePlaylists();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [desc, setDesc] = useState("");
 
   const handleCreate = () => {
     if (name.trim()) {
-      createPlaylist(name, description);
+      createPlaylist(name, desc);
       setOpen(false);
       setName("");
-      setDescription("");
+      setDesc("");
     }
   };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={3}>
-        <Box
+        <Stack
+          direction="row"
           sx={{
-            display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
           <PageHeader
             title="My Playlists"
-            description="Create and manage your custom movie playlists."
+            description="Create and manage your custom themed playlists."
           />
           <Button
             variant="contained"
-            color="primary"
+            startIcon={<AddIcon />}
             onClick={() => setOpen(true)}
           >
-            Create Playlist
+            New Playlist
           </Button>
-        </Box>
+        </Stack>
 
-        {playlists.length === 0 ? (
-          <Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ textAlign: "center", py: 8 }}
-          >
+        {isLoading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+            <CircularProgress />
+          </Box>
+        ) : playlists.length === 0 ? (
+          <Typography color="text.secondary">
             You haven't created any playlists yet.
           </Typography>
         ) : (
-          <Grid container spacing={3}>
+          <Stack spacing={2}>
             {playlists.map((playlist) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={playlist.id}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h5" component="div" gutterBottom>
-                      {playlist.name}
-                    </Typography>
+              <Accordion key={playlist.id}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      pr: 2,
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="h6">{playlist.name}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {playlist.description}
+                      </Typography>
+                    </Box>
                     <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mb: 2 }}
+                      variant="caption"
+                      sx={{
+                        ml: 2,
+                        px: 2,
+                        py: 0.5,
+                        bgcolor: "rgba(123, 31, 162, 0.1)",
+                        color: "primary.main",
+                        borderRadius: 4,
+                      }}
                     >
-                      {playlist.description || "No description provided."}
+                      {playlist.movieIds.length} movies
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {playlist.movieIds.length} movie
-                      {playlist.movieIds.length === 1 ? "" : "s"}
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {playlist.movieIds.length === 0 ? (
+                    <Typography variant="body2" color="text.secondary">
+                      No movies in this playlist.
                     </Typography>
-                  </CardContent>
-                  <CardActions
-                    sx={{ justifyContent: "space-between", px: 2, pb: 2 }}
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">
+                      Movie IDs in playlist: {playlist.movieIds.join(", ")}
+                    </Typography>
+                  )}
+                  <Box
+                    sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}
                   >
                     <Button
                       size="small"
-                      variant="outlined"
-                      onClick={() => navigate(`/playlists/${playlist.id}`)}
-                    >
-                      View Movies
-                    </Button>
-                    <IconButton
                       color="error"
+                      startIcon={<DeleteIcon />}
                       onClick={() => deletePlaylist(playlist.id)}
-                      aria-label="delete playlist"
                     >
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardActions>
-                </Card>
-              </Grid>
+                      Delete Playlist
+                    </Button>
+                  </Box>
+                </AccordionDetails>
+              </Accordion>
             ))}
-          </Grid>
+          </Stack>
         )}
+      </Stack>
 
-        <Dialog
-          open={open}
-          onClose={() => setOpen(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>Create New Playlist</DialogTitle>
-          <DialogContent>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Create New Playlist</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
               autoFocus
-              margin="dense"
               label="Playlist Name"
-              type="text"
               fullWidth
-              variant="outlined"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
             />
             <TextField
-              margin="dense"
-              label="Description (optional)"
-              type="text"
+              label="Description"
               fullWidth
-              variant="outlined"
               multiline
               rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
             />
-          </DialogContent>
-          <DialogActions sx={{ p: 3 }}>
-            <Button onClick={() => setOpen(false)} color="inherit">
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCreate}
-              variant="contained"
-              disabled={!name.trim()}
-            >
-              Create
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Stack>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleCreate}
+            variant="contained"
+            disabled={!name.trim()}
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
