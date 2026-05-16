@@ -1,7 +1,8 @@
-const BASE_URL = "/api/tmdb";
+// const BASE_URL = "/api/tmdb";
 
 // S3 deployment
-//const BASE_URL = "https://enterprise-web-development-assignme.vercel.app/api/tmdb";
+const BASE_URL =
+  "https://enterprise-web-development-assignme.vercel.app/api/tmdb";
 
 interface GetMoviesParams {
   page?: number;
