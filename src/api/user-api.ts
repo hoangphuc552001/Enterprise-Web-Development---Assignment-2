@@ -85,3 +85,34 @@ export const updateFantasyMovies = async (movies: FantasyMovie[]) => {
   }
   return response.json();
 };
+
+export const getPresignedUploadUrl = async (
+  fileName: string,
+  fileType: string,
+): Promise<{ uploadUrl: string; fileUrl: string }> => {
+  const response = await fetch(`${API_URL}/upload/presigned-url`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ fileName, fileType }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to get upload URL");
+  }
+  return response.json();
+};
+
+export const uploadFileToS3 = async (file: File): Promise<string> => {
+  const { uploadUrl, fileUrl } = await getPresignedUploadUrl(
+    file.name,
+    file.type,
+  );
+  const uploadResponse = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+  if (!uploadResponse.ok) {
+    throw new Error("Failed to upload image to S3");
+  }
+  return fileUrl;
+};

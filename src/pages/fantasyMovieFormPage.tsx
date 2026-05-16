@@ -23,6 +23,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { getGenres } from "../api/tmdb-api";
 import { useFantasyMovies } from "../hooks/useFantasyMovies";
 import PageHeader from "../components/PageHeader";
+import PosterUpload from "../components/PosterUpload";
 import type { FantasyMovie } from "../types/interfaces";
 
 interface FormValues {
@@ -206,12 +207,16 @@ const FantasyMovieFormPage = () => {
               })}
             />
 
-            <TextField
-              label="Poster URL"
-              fullWidth
-              error={!!errors.posterPath}
-              helperText={errors.posterPath?.message}
-              {...register("posterPath")}
+            <Controller
+              name="posterPath"
+              control={control}
+              render={({ field }) => (
+                <PosterUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.posterPath?.message}
+                />
+              )}
             />
 
             <Stack spacing={2}>
