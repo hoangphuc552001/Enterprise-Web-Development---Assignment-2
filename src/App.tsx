@@ -53,12 +53,38 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/fantasy" element={<FantasyMoviePage />} />
-        <Route path="/fantasy/new" element={<FantasyMovieFormPage />} />
-        <Route path="/fav-actors" element={<FavouriteActorsPage />} />
-        <Route path="/fav-tv" element={<FavouriteTvSeriesPage />} />
-        <Route path="/playlists" element={<PlaylistsPage />} />
-
+        <Route
+          path="/fantasy"
+          element={
+            <ProtectedRoute>
+              <FantasyMoviePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/fantasy/new"
+          element={
+            <ProtectedRoute>
+              <FantasyMovieFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/fav-actors"
+          element={
+            <ProtectedRoute>
+              <FavouriteActorsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/fav-tv"
+          element={
+            <ProtectedRoute>
+              <FavouriteTvSeriesPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/playlists"
           element={
