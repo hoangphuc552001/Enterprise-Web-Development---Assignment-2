@@ -1,0 +1,22 @@
+Enterprise Web Development — Assignment 2
+Student: Hoang Phuc Le (20115747)
+
+1. GitHub Repositories
+   - Assignment 2 (Frontend + Deployment):
+     https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-2
+
+   - Assignment 1 (Backend — AWS Lambda, DynamoDB, Cognito, CDK):
+     https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-1
+
+2. YouTube Demo
+   <INSERT YOUTUBE URL HERE>
+
+3. README
+   See README.md in the Assignment 2 repository.
+   https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-2/blob/main/README.md
+
+4. AI Usage Documentation
+   See AI_USAGE.md in the Assignment 2 repository.
+   https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-2/blob/main/AI_USAGE.md
+
+   AI chat history file: ai_chat_history.txt (included in repository root)
