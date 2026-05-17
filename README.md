@@ -52,7 +52,7 @@
 
 #### Server State Caching
 
-All remote data fetched via **TanStack React Query** and filtering.
+All remote data fetched via **TanStack React Query** with caching and filtering.
 
 #### Parameterised Routes
 
@@ -112,7 +112,7 @@ When a user selects a poster image, the frontend calls POST /upload/presigned-ur
 
 #### Frontend CDN - AWS CloudFront
 
-The production build is deployed to an **S3 bucket** and served through **CloudFront** for global edge caching. A separate Vercel deployment handles the TMDB API proxy edge function.
+The production build is deployed to an **S3 bucket** and served through **CloudFront** for global edge caching.
 
 ---
 
