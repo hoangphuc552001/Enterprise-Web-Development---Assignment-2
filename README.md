@@ -167,6 +167,10 @@ All user data is persisted to **DynamoDB** through dedicated Lambda endpoints:
 | Fantasy movies        | `GET/PUT /user/fantasy-movies`                    |
 | Movie reviews         | `GET /movies/{id}/reviews` `POST /movies/reviews` |
 
+### Proxy server
+
+The frontend development server is configured with a proxy to route API requests to the correct backend endpoints to hidden TMDB api key.
+
 ### SDD
 
 I used Claude then I create folder ./skills and update all the lab skills in that folder and ask Claude to generate the SDD based on those skills. The SDD is located at [./SDD.md](./SDD.md).

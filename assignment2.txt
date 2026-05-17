@@ -1,0 +1,19 @@
+Enterprise Web Development — Assignment 2
+Student: Hoang Phuc Le (20115747)
+
+1. GitHub Repositories
+   - Assignment 2 (Frontend):
+     https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-2
+
+   - Assignment 1 (Backend):
+     https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-1
+
+2. YouTube Demo
+   https://www.youtube.com/watch?v=mKIR-aBwL4E
+   https://drive.google.com/drive/folders/1OXSskze0KhVRWgrZD9al-AjKvDMFp6om?usp=sharing
+
+3. README
+   https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-2/blob/main/README.md
+
+4. AI Usage Documentation
+   https://github.com/hoangphuc552001/Enterprise-Web-Development---Assignment-2/blob/main/AI_USAGE.md
