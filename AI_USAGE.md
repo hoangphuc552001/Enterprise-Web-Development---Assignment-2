@@ -34,7 +34,9 @@ I ask AI to help me understand the error messages and suggest potential fixes.
 
 I copy the code and ask AI what the code does, how it works, and if there are any potential issues or improvements.
 
----
+### 5. Type-checks, linters, and live tests
+
+## For routine checks such as type-checking, linting, or running live tests, I ask AI to run the commands and report any issues or errors it finds.
 
 ## AI Resources
 
